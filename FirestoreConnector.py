@@ -19,9 +19,13 @@ class FirestoreConnector():
             self.cred, {'databaseURL': self.url})
         self.db = firestore.client()
 
-    def get_collection(self, name, _id):
+    def get_document(self, name, _id):
         doc_ref = self.db.collection(name).document(_id)
-        return dict(doc_ref.get())
+        return doc_ref.get().to_dict()
+
+    def get_collection(self, name):
+        doc_ref = self.db.collection(name)
+        return [x.to_dict() for x in doc_ref.get()]
 
     def update_collection(self, name, data):
         assert '_id' in data.keys()
