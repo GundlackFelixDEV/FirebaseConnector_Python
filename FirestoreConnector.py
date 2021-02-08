@@ -11,7 +11,7 @@ class FirestoreConnector():
     def __init__(self, project, path_cred):
         assert isinstance(project, str)
         assert isinstance(path_cred, str)
-        assert os.path.isfile(path_cred)
+        assert os.path.isfile(path_cred), f"Invalide credential file_path: [{path_cred}] does not exist!"
         self.cred = credentials.Certificate(path_cred)
         self.url = f"https://{project}.firebaseio.com"
 
