@@ -64,3 +64,19 @@ class FirebaseStatusPipeline(FirebaseConnector):
     def process_item(self, item, spider):
         self.n_items += 1
         return item
+
+
+class FirebaseItemPipeline(FirebaseConnector):
+    @classmethod
+    def from_crawler(cls, crawler):
+        SETTINGS = "FIREBASE_ITEM_SETTINGS"
+        coll, cred, proj = FirebaseConnector.get_settings(crawler, SETTINGS)
+
+        return cls(credentials=cred, project=proj, collection=coll)
+
+    def __init__(self, credentials, project, collection):
+        FirebaseConnector.__init__(self, credentials, project, collection)
+
+    def process_item(self, item, spider):
+        self.db.update_collection(self.collection, dict(item))
+        return item
