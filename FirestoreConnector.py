@@ -23,24 +23,24 @@ class FirestoreConnector():
                 self.cred, {'databaseURL': self.url}, project)
         self.db = firestore.client(self.app)
 
-    def get_document(self, name, _id):
-        doc_ref = self.db.collection(name).document(_id)
+    def get_document(self, coll, _id):
+        doc_ref = self.db.collection(coll).document(_id)
         return doc_ref.get().to_dict()
 
-    def get_collection(self, name):
-        doc_ref = self.db.collection(name)
+    def get_collection(self, coll):
+        doc_ref = self.db.collection(coll)
         return [x.to_dict() for x in doc_ref.get()]
 
-    def check_exists(self, name, data):
+    def check_exists(self, coll, data):
         assert '_id' in data.keys()
-        doc_ref = self.db.collection(name).document(data['_id'])
+        doc_ref = self.db.collection(coll).document(data['_id'])
         doc = doc_ref.get()
         return doc.exists
 
-    def update_collection(self, name, data):
+    def update_collection(self, coll, data):
         assert '_id' in data.keys()
-        doc_ref = self.db.collection(name).document(data['_id'])
-        if not self.check_exists(name, data):
+        doc_ref = self.db.collection(coll).document(data['_id'])
+        if not self.check_exists(coll, data):
             data['created'] = str(datetime.now())
         data['changed'] = str(datetime.now())
 
