@@ -26,7 +26,10 @@ class FirestoreConnector():
     def get_document(self, coll, _id):
         doc_ref = self.db.collection(coll).document(_id)
         return doc_ref.get().to_dict()
-
+        
+    def delete_document(self, coll, _id):
+        self.db.collection(coll).doc(_id).delete()
+    
     def get_collection(self, coll):
         doc_ref = self.db.collection(coll)
         return [x.to_dict() for x in doc_ref.get()]
