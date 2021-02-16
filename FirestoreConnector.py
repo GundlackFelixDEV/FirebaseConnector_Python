@@ -30,8 +30,8 @@ class FirestoreConnector():
 
 
     def delete_document(self, coll, _id):
-        if not self.check_exists(coll, _id):
-            self.db.collection(coll).doc(_id).delete()
+        if self.check_exists(coll, _id):
+            self.db.collection(coll).document(_id).delete()
     
 
     def get_collection(self, coll):
