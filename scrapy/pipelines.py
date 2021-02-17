@@ -1,8 +1,10 @@
 from scrapy.exporters import PythonItemExporter
 from datetime import datetime
-import os
+import os, binascii
 from ..FirestoreConnector import FirestoreConnector
 
+def str2hex(text):
+    return binascii.hexlify(text.encode()).decode('utf-8')
 
 class FirebaseConnector(object):
     @classmethod
@@ -37,32 +39,41 @@ class FirebaseStatusPipeline(FirebaseConnector):
 
     def __init__(self, credentials, project, collection, document):
         FirebaseConnector.__init__(self, credentials, project, collection)
+        self.collection = collection
         self.document = document
-        self.n_items = 0
+        self.items = []
 
-    def update_status(self, query, status):
+
+    def update_status(self, status):
         data = {
             "_id": self.document,
-            "session": {query: status}
+            "queries": {self.query_id: status}
         }
         self.db.update_collection(self.collection, data)
 
     def open_spider(self, spider):
+        self.query_id = str2hex(spider.query)
+        self.update_status({})
         query_status = {
+            'query': spider.query,
             'status': "crawling",
-            'result': None
+            'result': None,
+            'start': str(datetime.now()),
+            'ready': None
         }
-        self.update_status(spider.query, query_status)
+        self.update_status(query_status)
 
     def close_spider(self, spider):
         query_status = {
+            'query': spider.query,
             'status': "ready",
-            'result': self.n_items
+            'result': len(set(self.items)),
+            'ready': str(datetime.now())
         }
-        self.update_status(spider.query, query_status)
+        self.update_status(query_status)
 
     def process_item(self, item, spider):
-        self.n_items += 1
+        self.items.append(item['_id'])
         return item
 
 
