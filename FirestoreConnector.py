@@ -45,11 +45,16 @@ class FirestoreConnector():
         return doc.exists
 
 
-    def update_collection(self, coll, data):
-        assert '_id' in data.keys()
+    def update_document(self, coll, data):
+        assert '_id' in data.keys(), "required field _id missing"
         doc_ref = self.db.collection(coll).document(data['_id'])
         if not self.check_exists(coll, data['_id']):
             data['created'] = str(datetime.now())
         data['changed'] = str(datetime.now())
 
         doc_ref.set(data, merge=True)
+
+    def update_collection(self, coll, data):
+        assert isinstance(data, list), "Expected a list of documents"
+        for item in data:
+            self.update_document(coll, item)
