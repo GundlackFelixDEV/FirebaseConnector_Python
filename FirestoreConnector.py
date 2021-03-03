@@ -29,6 +29,10 @@ class FirestoreConnector():
         return doc_ref.get().to_dict()
 
 
+    def get_document_where(self, coll, uid):
+        docs = self.db.collection(coll).where('uid', '==', uid).stream()
+        return [doc.to_dict() for doc in docs]
+
     def delete_document(self, coll, _id):
         if self.check_exists(coll, _id):
             self.db.collection(coll).document(_id).delete()
