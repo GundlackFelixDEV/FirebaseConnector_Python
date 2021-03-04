@@ -49,7 +49,7 @@ class FirebaseStatusPipeline(FirebaseConnector):
             "_id": self.document,
             "queries": {self.query_id: status}
         }
-        self.db.update_collection(self.collection, data)
+        self.db.update_document(self.collection, data)
 
     def open_spider(self, spider):
         self.query_id = str2hex(spider.query)
@@ -89,5 +89,5 @@ class FirebaseItemPipeline(FirebaseConnector):
         FirebaseConnector.__init__(self, credentials, project, collection)
 
     def process_item(self, item, spider):
-        self.db.update_collection(self.collection, dict(item))
+        self.db.update_document(self.collection, dict(item))
         return item
