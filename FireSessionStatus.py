@@ -19,11 +19,12 @@ class FireSessionStatus(FirestoreConnector):
         }
         self.update_document(self.collection, data)
 
-    def on_query_init(self, session_id, query_id, query):
+    def on_query_init(self, session_id, query_id, query, nresults= None):
         status = {
+            '_id': query_id,
             'query': query,
             'status': "starting",
-            'result': None,
+            'result': nresults,
             'start': str(datetime.now()),
             'ready': None
         }
@@ -31,21 +32,18 @@ class FireSessionStatus(FirestoreConnector):
 
     def on_query_start(self, session_id, query_id):
         status = {
-            'query': query_id,
             'status': "crawling",
         }
         self.update_query_status(session_id, query_id, status)
 
     def on_query_finalize(self, session_id, query_id):
         status = {
-            'query': query_id,
             'status': "finalize",
         }
         self.update_query_status(session_id, query_id, status)
 
     def on_query_finished(self, session_id, query_id, n_results):
         status = {
-            'query': query_id,
             'status': "ready",
             'result': n_results,
             'ready': str(datetime.now())
