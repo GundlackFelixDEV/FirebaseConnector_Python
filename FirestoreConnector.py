@@ -4,7 +4,6 @@ from firebase_admin import db
 from firebase_admin import firestore
 
 import os
-from datetime import datetime
 
 
 class FirestoreConnector():
