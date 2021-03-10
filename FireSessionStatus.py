@@ -19,12 +19,11 @@ class FireSessionStatus(FirestoreConnector):
         }
         self.update_document(self.collection, data)
 
-    def on_query_init(self, session_id, query_id, query, nresults= None):
+    def on_query_init(self, session_id, query_id, query):
         status = {
             '_id': query_id,
             'query': query,
             'status': "starting",
-            'result': nresults,
             'start': firestore.SERVER_TIMESTAMP,
             'ready': None
         }
