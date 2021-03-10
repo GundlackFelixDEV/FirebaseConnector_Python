@@ -4,7 +4,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
 
-from datetime import datetime
+from firebase_admin import firestore
 from FirebaseConnector.FirestoreConnector import FirestoreConnector
 
 class FireSessionStatus(FirestoreConnector):
@@ -25,7 +25,7 @@ class FireSessionStatus(FirestoreConnector):
             'query': query,
             'status': "starting",
             'result': nresults,
-            'start': str(datetime.now()),
+            'start': firestore.SERVER_TIMESTAMP,
             'ready': None
         }
         self.update_query_status(session_id, query_id, status)
@@ -46,6 +46,6 @@ class FireSessionStatus(FirestoreConnector):
         status = {
             'status': "ready",
             'result': n_results,
-            'ready': str(datetime.now())
+            'ready': firestore.SERVER_TIMESTAMP
         }
         self.update_query_status(session_id, query_id, status)
