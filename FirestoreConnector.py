@@ -49,6 +49,14 @@ class FirestoreConnector():
         return doc.exists
 
 
+    def set_document(self, coll, data, existing=False):
+        assert '_id' in data.keys() or 'uid' in data.keys(), "required field _id missing"
+        _id = data['_id'] if '_id' in data.keys() else data['uid']
+        doc_ref = self.db.collection(coll).document(_id)
+        doc = doc_ref.get()
+        if not doc.exists or existing:
+            doc_ref.set(data, merge=False)
+
     def update_document(self, coll, data):
         assert '_id' in data.keys() or 'uid' in data.keys(), "required field _id missing"
         _id = data['_id'] if '_id' in data.keys() else data['uid']
