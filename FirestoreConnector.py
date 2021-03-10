@@ -8,6 +8,11 @@ from datetime import datetime
 
 
 class FirestoreConnector():
+
+    @classmethod
+    def TimeStamp(cls):
+        return firestore.SERVER_TIMESTAMP
+
     def __init__(self, project, path_cred):
         assert isinstance(project, str)
         assert isinstance(path_cred, str)
@@ -27,7 +32,6 @@ class FirestoreConnector():
     def get_document(self, coll, _id):
         doc_ref = self.db.collection(coll).document(_id)
         return doc_ref.get().to_dict()
-
 
     def get_document_where(self, coll, uid):
         docs = self.db.collection(coll).where('uid', '==', uid).stream()
@@ -55,6 +59,7 @@ class FirestoreConnector():
         doc_ref = self.db.collection(coll).document(_id)
         doc = doc_ref.get()
         if not doc.exists or existing:
+            data['created'] = firestore.SERVER_TIMESTAMP
             doc_ref.set(data, merge=False)
 
     def update_document(self, coll, data):
@@ -62,8 +67,8 @@ class FirestoreConnector():
         _id = data['_id'] if '_id' in data.keys() else data['uid']
         doc_ref = self.db.collection(coll).document(_id)
         if not self.check_exists(coll, _id):
-            data['created'] = str(datetime.now())
-        data['changed'] = str(datetime.now())
+            data['created'] = firestore.SERVER_TIMESTAMP
+        data['changed'] = firestore.SERVER_TIMESTAMP
 
         doc_ref.set(data, merge=True)
 
