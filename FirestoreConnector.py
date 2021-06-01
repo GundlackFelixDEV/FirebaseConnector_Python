@@ -19,12 +19,14 @@ class FirestoreConnector():
             path_cred), f"Invalide credential file_path: [{path_cred}] does not exist!"
         self.cred = credentials.Certificate(path_cred)
         self.url = f"https://{project}.firebaseio.com"
-        if not len(firebase_admin._apps):
-            self.app = firebase_admin.initialize_app(
-                self.cred, {'databaseURL': self.url})
-        else:
+
+        # Init Firebase Application
+        self.app = firebase_admin._apps.get(project, None)
+        if self.app == None:
             self.app = firebase_admin.initialize_app(
                 self.cred, {'databaseURL': self.url}, project)
+
+        # Get Database Client
         self.db = firestore.client(self.app)
 
 
